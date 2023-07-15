@@ -9,14 +9,12 @@ using Application.Posts.Queries;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
+using MinimalApi.Extensions;
+
+// builder area
 
 var builder = WebApplication.CreateBuilder(args);
-
-var cs = builder.Configuration.GetConnectionString("Default");
-
-builder.Services.AddDbContext<SocialDbContext>(opt => opt.UseSqlServer(cs));
-builder.Services.AddScoped<IPostsRepository, PostRepository>();
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining(typeof(CreatePost)));
+builder.RegisterServices();
 
 var app = builder.Build();
 
