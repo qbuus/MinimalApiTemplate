@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.Data.SqlClient.DataClassification;
 using Microsoft.Extensions.Hosting;
 using MinimalApi.Abstractions;
+using MinimalApi.Filters;
 
 namespace MinimalApi.EndpointDefinitions
 {
@@ -16,11 +17,11 @@ namespace MinimalApi.EndpointDefinitions
 
             posts.MapGet("/{id}", GetPostById).WithName("GetPostById");
 
-            posts.MapPost("/", CreatePost);
+            posts.MapPost("/", CreatePost).AddEndpointFilter<PostValidationFilter>();
 
             posts.MapGet("/", GetAllPosts);
 
-            posts.MapPut("/{id}", UpdatePost);
+            posts.MapPut("/{id}", UpdatePost).AddEndpointFilter<PostValidationFilter>(); ;
 
             posts.MapDelete("/{id}", DeletePost);
         }
@@ -46,7 +47,7 @@ namespace MinimalApi.EndpointDefinitions
             return TypedResults.Ok(posts);
         }
 
-        private async Task<IResult> UpdatePost(IMediator mediator,Post post, int id, )
+        private async Task<IResult> UpdatePost(IMediator mediator,Post post, int id)
         {
             var updatePost = new UpdatePost { Id = id, Content = post.Content };
             var updatedPost = await mediator.Send(updatePost);
