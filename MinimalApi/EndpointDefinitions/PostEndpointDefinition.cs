@@ -2,6 +2,7 @@
 using Application.Posts.Queries;
 using Domain.Entities;
 using MediatR;
+using Microsoft.Data.SqlClient.DataClassification;
 using Microsoft.Extensions.Hosting;
 using MinimalApi.Abstractions;
 
@@ -21,12 +22,7 @@ namespace MinimalApi.EndpointDefinitions
 
             posts.MapPut("/{id}", UpdatePost);
 
-            posts.MapDelete("/{id}", async (IMediator mediator, int id) =>
-            {
-                var deletePostById = new DeletePost { Id = id };
-                await mediator.Send(deletePostById);
-                return Results.NoContent();
-            });
+            posts.MapDelete("/{id}", DeletePost);
         }
 
         private async Task<IResult> GetPostById(IMediator mediator, int id)
@@ -55,6 +51,12 @@ namespace MinimalApi.EndpointDefinitions
             var updatePost = new UpdatePost { Id = id, Content = post.Content };
             var updatedPost = await mediator.Send(updatePost);
             return TypedResults.Ok(updatedPost);
+        }
+        private async Task<IResult> DeletePost(IMediator mediator, int id)
+        {
+            var deletePostById = new DeletePost { Id = id };
+            await mediator.Send(deletePostById);
+            return TypedResults.NoContent();
         }
     }
 }
