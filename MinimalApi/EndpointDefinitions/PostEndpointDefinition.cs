@@ -2,6 +2,7 @@
 using Application.Posts.Queries;
 using Domain.Entities;
 using MediatR;
+using Microsoft.Extensions.Hosting;
 using MinimalApi.Abstractions;
 
 namespace MinimalApi.EndpointDefinitions
@@ -14,12 +15,7 @@ namespace MinimalApi.EndpointDefinitions
 
             posts.MapGet("/{id}", GetPostById).WithName("GetPostById");
 
-            posts.MapPost("/", async (IMediator mediator, Post post) =>
-            {
-                var createPost = new CreatePost { PostContent = post.Content };
-                var createdPost = await mediator.Send(createPost);
-                return Results.CreatedAtRoute("GetPostById", new { createdPost.Id }, createdPost);
-            });
+            posts.MapPost("/", CreatePost);
 
             posts.MapGet("/", async (IMediator mediator) =>
             {
@@ -48,6 +44,13 @@ namespace MinimalApi.EndpointDefinitions
             var getPost = new GetPostById { Id = id };
             var post = await mediator.Send(getPost);
             return TypedResults.Ok(post);
+        }
+
+        private async Task<IResult> CreatePost (IMediator mediator, Post post)
+        {
+            var createPost = new CreatePost { PostContent = post.Content };
+            var createdPost = await mediator.Send(createPost);
+            return Results.CreatedAtRoute("GetPostById", new { createdPost.Id }, createdPost);
         }
     }
 }
