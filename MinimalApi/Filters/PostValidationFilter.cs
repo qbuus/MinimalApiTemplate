@@ -8,7 +8,7 @@ namespace MinimalApi.Filters
         public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
         {
             var post = context.GetArgument<Post>(1);
-            if (post.Content.IsNullOrEmpty()) return await Task.FromResult(Results.BadRequest("Post not valid"));
+            if (string.IsNullOrEmpty(post.Content)) return await Task.FromResult(Results.BadRequest("Post not valid"));
             return await next(context);
         }
     }
