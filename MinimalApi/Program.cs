@@ -18,6 +18,18 @@ builder.RegisterServices();
 var app = builder.Build();
 
 // middleware area
+app.Use(async (context, next) =>
+{
+    try 
+    {
+        await next();
+    }
+    catch 
+    {
+        context.Response.StatusCode = 500;
+        await context.Response.WriteAsync("An error occured");
+    }
+});
 
 
 app.UseHttpsRedirection();
